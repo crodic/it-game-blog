@@ -1,0 +1,18 @@
+model Post {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    title     String   @unique
+    thumbnail String
+    content   String
+    views     Int      @default(0)
+    tags      String[]
+
+    authorId     String   @db.ObjectId
+    User         User     @relation(fields: [authorId], references: [id])
+    categoriesId String   @db.ObjectId
+    category     Category @relation(fields: [categoriesId], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("posts")
+}
