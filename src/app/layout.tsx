@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className={`relative antialiased h-[1000px] ${dancingScript.variable}`}>
+            <body className={`relative antialiased ${dancingScript.variable}`}>
                 <Providers>{children}</Providers>
             </body>
         </html>

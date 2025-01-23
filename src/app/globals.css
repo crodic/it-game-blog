@@ -33,7 +33,7 @@ body {
         --border: 214.3 31.8% 91.4%;
         --input: 214.3 31.8% 91.4%;
         --ring: 221.2 83.2% 53.3%;
-        --radius: 0rem;
+        --radius: 0.5rem;
         --chart-1: 12 76% 61%;
         --chart-2: 173 58% 39%;
         --chart-3: 197 37% 24%;
@@ -82,4 +82,25 @@ body {
     .wrapper {
         @apply w-full max-w-[1440px] mx-auto px-5 lg:px-32;
     }
+}
+
+.blogs li:first-child .blog-card .blog-card__image img {
+    @apply md:h-64;
+}
+
+.blogs li:last-child .blog-card .blog-card__image {
+    @apply md:basis-[49%];
+}
+
+.blogs li:last-child .blog-card .blog-card__content h4 {
+    @apply md:text-xl;
+}
+
+.blogs li:last-child .blog-card .blog-card__content p {
+    @apply md:line-clamp-5;
+}
+
+.blogs li:last-child .blog-card .blog-card__image img,
+.blogs li:last-child .blog-card {
+    @apply md:h-72;
 }
