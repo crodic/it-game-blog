@@ -11,9 +11,9 @@ export default function BlogList() {
                     Bài viết mới
                 </h4>
             </Link>
-            <ul className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 md:gap-6">
                 {[1, 2, 3, 4, 5, 6].map((item) => (
-                    <BlogCard key={item} />
+                    <BlogCard key={item} showDesc />
                 ))}
             </ul>
         </section>

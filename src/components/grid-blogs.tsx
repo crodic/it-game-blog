@@ -11,13 +11,13 @@ export default function GridBlogs() {
             </h4>
             <ul
                 className={cn(
-                    'grid grid-cols-1 md:grid-cols-2 gap-6 blogs',
+                    'grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4 md:gap-6 blogs',
                     'md:[&>li:first-child]:row-span-2 md:[&>li:first-child>.blog-card]:flex-col',
                     'md:[&>li:last-child]:col-span-2'
                 )}
             >
                 {[1, 2, 3, 4].map((item) => (
-                    <BlogCard key={item} gridMode />
+                    <BlogCard key={item} gridMode showDesc />
                 ))}
             </ul>
         </section>
