@@ -1,13 +1,14 @@
 model Post {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    title     String   @unique
-    thumbnail String
-    content   String
-    views     Int      @default(0)
-    tags      String[]
+    id          String   @id @default(auto()) @map("_id") @db.ObjectId
+    title       String   @unique
+    thumbnail   String
+    content     String
+    views       Int      @default(0)
+    tags        String[]
+    isPublished Boolean  @default(true)
 
     authorId     String   @db.ObjectId
-    User         User     @relation(fields: [authorId], references: [id])
+    User         User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
     categoriesId String   @db.ObjectId
     category     Category @relation(fields: [categoriesId], references: [id])
 
