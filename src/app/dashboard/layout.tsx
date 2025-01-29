@@ -1,7 +1,6 @@
 import { AppSidebar } from '@/components/sidebar/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { Toaster } from '@/components/ui/toaster';
 import { PropsWithChildren } from 'react';
 
 export default function DashboardLayout({ children }: PropsWithChildren) {
@@ -17,7 +16,6 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
                     </div>
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
-                <Toaster />
             </SidebarInset>
         </SidebarProvider>
     );

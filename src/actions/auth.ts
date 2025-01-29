@@ -11,6 +11,7 @@ import bcrypt from 'bcryptjs';
 
 export interface UserSession {
     user: {
+        id: string;
         email: string;
         name: string;
         role: User['role'];
@@ -19,12 +20,6 @@ export interface UserSession {
 }
 
 export async function login(values: AuthSchema) {
-    if (!values.email || !values.password) {
-        return {
-            error: 'Email and password are required',
-        };
-    }
-
     const checkExistingAdminAccount = await prisma.user.findMany({
         where: {
             role: 'ADMIN',
@@ -53,26 +48,27 @@ export async function login(values: AuthSchema) {
 
         if (!user) {
             return {
-                error: 'Invalid email or password',
+                error: 'Tài khoản hoặc mật khẩu không chính xác.',
             };
         }
 
         const checkPassword = bcrypt.compareSync(values.password, user.password);
-        if (!checkPassword) return { error: 'Invalid email or password' };
+        if (!checkPassword) return { error: 'Tài khoản hoặc mật khẩu không chính xác.' };
     }
 
     const dataSession = {
+        id: user.id,
         email: user.email,
         name: user.name,
         role: user.role,
     };
 
     const expires = new Date(Date.now() + 1 * 60 * 60 * 1000);
-    const session = await encrypt({ dataSession, expires });
+    const session = await encrypt({ user: dataSession, expires });
 
     cookies().set('session', session, { expires, httpOnly: true });
 
-    return { error: null, message: 'Login successfully' };
+    return { error: null, message: 'Đăng nhập thành công.' };
 }
 
 export async function logout() {

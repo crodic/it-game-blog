@@ -7,9 +7,10 @@ import { Editor } from '@tinymce/tinymce-react';
 interface TinyMiceEditorProps {
     onChange: (value: string) => void;
     value: string;
+    disabled?: boolean;
 }
 
-export default function TinyMiceEditor({ onChange, value }: TinyMiceEditorProps) {
+export default function TinyMiceEditor({ onChange, value, disabled }: TinyMiceEditorProps) {
     const editorRef = useRef<any>(null);
     const filePickerCallback = (
         callback: (value: string, meta?: Record<string, any>) => void,
@@ -67,6 +68,7 @@ export default function TinyMiceEditor({ onChange, value }: TinyMiceEditorProps)
                 console.log('Content was updated:', content);
                 onChange(content);
             }}
+            disabled={disabled}
             init={{
                 height: 500,
                 menubar: false,
@@ -89,10 +91,11 @@ export default function TinyMiceEditor({ onChange, value }: TinyMiceEditorProps)
                     'code',
                     'help',
                     'wordcount',
+                    'linkchecker',
                 ],
                 toolbar:
                     'undo redo | blocks | image ' +
-                    'bold italic forecolor | alignleft aligncenter ' +
+                    'bold italic underline forecolor | alignleft aligncenter ' +
                     'alignright alignjustify | bullist numlist outdent indent | ' +
                     'removeformat | help',
                 content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',

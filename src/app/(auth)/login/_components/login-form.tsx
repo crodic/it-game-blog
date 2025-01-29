@@ -81,8 +81,8 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                                     )}
                                 />
 
-                                <Button type="submit" className="w-full">
-                                    Login
+                                <Button disabled={form.formState.isSubmitting} type="submit" className="w-full">
+                                    {form.formState.isSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
                                 </Button>
                             </div>
                         </form>

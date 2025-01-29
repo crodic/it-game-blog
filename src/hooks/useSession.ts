@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { UserSession } from '@/actions/auth';
+import { logout, UserSession } from '@/actions/auth';
 import { useEffect, useState } from 'react';
 
 const useSession = () => {
@@ -9,10 +10,16 @@ const useSession = () => {
 
     useEffect(() => {
         const getSession = async () => {
-            const session = await fetch('http://localhost:3000/api/user');
-            const data = await session.json();
-            setSession(data);
-            setIsLoading(false);
+            try {
+                const session = await fetch('http://localhost:3000/api/users');
+                const data = await session.json();
+                setSession(data);
+                setIsLoading(false);
+            } catch (error: any) {
+                if (error.status === 401) {
+                    await logout();
+                }
+            }
         };
 
         getSession();

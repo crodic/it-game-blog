@@ -14,8 +14,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TagInput, Tag } from 'emblor';
 import dynamic from 'next/dynamic';
+import { createBlog } from '../create/actions';
+import { toast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
-const TinyMiceEditor = dynamic(() => import('@/components/tiny-editor'), { loading: () => <div>Loading...</div> });
+const TinyMiceEditor = dynamic(() => import('@/components/tiny-editor'), {
+    loading: () => <div>Loading...</div>,
+    ssr: false,
+});
 
 export default function BlogForm() {
     const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -26,15 +32,31 @@ export default function BlogForm() {
         defaultValues: {
             title: '',
             content: '',
-            categoryId: '',
+            categoriesId: '',
             isPublished: true,
             tags: [],
             thumbnail: '',
         },
     });
 
+    const isLoadingForm = form.formState.isSubmitting;
+
     const onSubmit = async (values: BlogSchema) => {
-        console.log(values);
+        const { error } = await createBlog(values);
+        if (!error) {
+            form.reset();
+            setPreviewImage(null);
+            toast({
+                title: 'Thành công!!!',
+                variant: 'default',
+            });
+        } else {
+            toast({
+                title: 'Lỗi!!!',
+                description: error,
+                variant: 'destructive',
+            });
+        }
     };
 
     return (
@@ -48,7 +70,7 @@ export default function BlogForm() {
                             <FormItem>
                                 <FormLabel>Tiêu Đề Bài Viết</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Nhập tiêu đề..." {...field} />
+                                    <Input disabled={isLoadingForm} placeholder="Nhập tiêu đề..." {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -73,7 +95,6 @@ export default function BlogForm() {
                                 )}
                                 <FormControl>
                                     <div className="flex gap-4">
-                                        <Input className="hidden" placeholder="Nhập link..." {...field} />
                                         <CldUploadWidget
                                             uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!}
                                             onSuccess={(result) => {
@@ -87,7 +108,15 @@ export default function BlogForm() {
                                             }}
                                         >
                                             {({ open }) => {
-                                                return <Button onClick={() => open()}>Tải Lên Hình Ảnh</Button>;
+                                                return (
+                                                    <Button
+                                                        disabled={isLoadingForm}
+                                                        type="button"
+                                                        onClick={() => open()}
+                                                    >
+                                                        Tải Lên Hình Ảnh
+                                                    </Button>
+                                                );
                                             }}
                                         </CldUploadWidget>
                                     </div>
@@ -104,9 +133,11 @@ export default function BlogForm() {
                             <FormItem>
                                 <FormLabel>Nội Dung Bài Viết</FormLabel>
                                 <FormControl>
-                                    {/* <Suspense fallback={<div>Loading...</div>}> */}
-                                    <TinyMiceEditor onChange={field.onChange} value={field.value} />
-                                    {/* </Suspense> */}
+                                    <TinyMiceEditor
+                                        disabled={isLoadingForm}
+                                        onChange={field.onChange}
+                                        value={field.value}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -120,13 +151,17 @@ export default function BlogForm() {
                     <CardContent>
                         <div className="space-y-4">
                             <FormField
-                                name="categoryId"
+                                name="categoriesId"
                                 control={form.control}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Danh Mục</FormLabel>
                                         <FormControl>
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <Select
+                                                disabled={isLoadingForm}
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                            >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select a category" />
                                                 </SelectTrigger>
@@ -148,6 +183,7 @@ export default function BlogForm() {
                                         <FormLabel>Tags</FormLabel>
                                         <FormControl>
                                             <TagInput
+                                                disabled={isLoadingForm}
                                                 {...field}
                                                 tags={tags}
                                                 placeholder="Nhập tag..."
@@ -165,7 +201,9 @@ export default function BlogForm() {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button className="w-full">Tạo Bài Viết</Button>
+                        <Button className="w-full" type="submit" disabled={isLoadingForm}>
+                            {isLoadingForm ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Tạo Bài Viết'}
+                        </Button>
                     </CardFooter>
                 </Card>
             </form>
