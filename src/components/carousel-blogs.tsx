@@ -1,4 +1,4 @@
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { Blog } from '@prisma/client';
 import BlogCard from './blog-card';
 
@@ -17,14 +17,14 @@ export function CarouselBlogs({ blogs }: CarouselBlogsProps) {
             <CarouselContent>
                 {blogs.map((blog) => (
                     <CarouselItem key={blog.id} className="md:basis-1/2 lg:basis-1/3">
-                        <div className="p-1">
+                        <div className="p-1 h-full">
                             <BlogCard data={blog} showDescription hiddenTags />
                         </div>
                     </CarouselItem>
                 ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            {/* <CarouselPrevious />
+            <CarouselNext /> */}
         </Carousel>
     );
 }
