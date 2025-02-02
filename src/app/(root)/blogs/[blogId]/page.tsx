@@ -30,12 +30,12 @@ export default async function BlogDetail({ params }: { params: { blogId: string 
     return (
         <div className="wrapper space-y-12">
             <CheckViewed blogId={params.blogId} />
-            <div className="content flex gap-16">
-                <div className="flex-1 flex flex-col gap-8">
+            <div className="content flex gap-8 md:gap-16 w-full">
+                <div className="flex-1 flex flex-col gap-8 w-full">
                     <p className="text-sm text-primary opacity-45">{new Date(post.createdAt).toDateString()}</p>
                     <h3 className="text-4xl font-bold">{post.title}</h3>
                     <main
-                        className="h-max prose w-full max-w-none"
+                        className="h-max prose w-fit max-w-none"
                         dangerouslySetInnerHTML={{ __html: post.content }}
                     ></main>
                     <div className="space-y-4">
