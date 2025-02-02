@@ -3,9 +3,9 @@ import { cn } from '@/lib/utils';
 import { Blog } from '@prisma/client';
 
 export default async function NewBlogsList() {
-    const data = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs/new`, { cache: 'no-cache' }).then((res) =>
-        res.json()
-    );
+    const data = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs/new`)
+        .then((res) => res.json())
+        .catch(() => ({ data: [] }));
     const payload: Blog[] = data.data;
 
     return (
