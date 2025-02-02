@@ -32,17 +32,23 @@ export default function BlogSearch() {
     return (
         <div className="flex-1 space-y-8">
             {q && <h4 className="text-xl font-semibold">Kết quả tìm kiếm cho: &ldquo;{q}&ldquo;</h4>}
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {data.data.map((item) => (
-                    <BlogCard data={item} key={item.id} showDescription hiddenTags />
-                ))}
-            </section>
-            <PaginationWithLinks
-                page={Number(page)}
-                pageSize={Number(limit)}
-                totalCount={data.pagination.total}
-                siblingCount={2}
-            />
+            {data.data.length > 0 ? (
+                <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {data.data.map((item) => (
+                        <BlogCard data={item} key={item.id} showDescription hiddenTags />
+                    ))}
+                </section>
+            ) : (
+                <h3 className="text-2xl font-semibold text-destructive">Không có bài viết nào !!!</h3>
+            )}
+            {data.data.length > 0 && (
+                <PaginationWithLinks
+                    page={Number(page)}
+                    pageSize={Number(limit)}
+                    totalCount={data.pagination.total}
+                    siblingCount={2}
+                />
+            )}
         </div>
     );
 }

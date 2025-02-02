@@ -1,12 +1,11 @@
 import BlogCard from '@/components/blog-card';
 import { cn } from '@/lib/utils';
+import { getTrendingBlogs } from '@/services/apis/blogs';
 import { Blog } from '@prisma/client';
 
 export default async function BlogsTrending() {
-    const data = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs/trending`)
-        .then((res) => res.json())
-        .catch(() => ({ data: [] }));
-    const payload: Blog[] = data.data;
+    const data = await getTrendingBlogs().catch(() => []);
+    const payload: Blog[] = data;
 
     if (payload.length < 4) return null;
 

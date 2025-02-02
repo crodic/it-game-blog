@@ -1,9 +1,9 @@
-import SearchBar from '@/components/search-bar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 const BlogSearch = dynamic(() => import('./_components/blog-search'), { ssr: false });
+const SearchBar = dynamic(() => import('@/components/search-bar'), { ssr: false });
 
 export default function Page() {
     return (
@@ -19,7 +19,9 @@ export default function Page() {
                                 <h6 className="text-base font-semibold">Tìm kiếm bài viết</h6>
                                 <Separator className="border-2 border-primary" />
                             </div>
-                            <SearchBar />
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <SearchBar />
+                            </Suspense>
                         </CardContent>
                     </Card>
                 </div>
