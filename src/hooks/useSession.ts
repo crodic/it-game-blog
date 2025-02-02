@@ -11,7 +11,7 @@ const useSession = () => {
     useEffect(() => {
         const getSession = async () => {
             try {
-                const session = await fetch('http://localhost:3000/api/users');
+                const session = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users`);
                 const data = await session.json();
                 setSession(data);
                 setIsLoading(false);

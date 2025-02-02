@@ -3,8 +3,8 @@ import BlogCard from './blog-card';
 import { Separator } from './ui/separator';
 
 export default async function SideBlogs() {
-    const data = await fetch('http://localhost:3000/api/blogs/trending', { cache: 'force-cache' }).then((res) =>
-        res.json()
+    const data = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs/trending`, { cache: 'force-cache' }).then(
+        (res) => res.json()
     );
     const payload: Blog[] = data.data;
 

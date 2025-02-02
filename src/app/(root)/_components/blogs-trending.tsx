@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { Blog } from '@prisma/client';
 
 export default async function BlogsTrending() {
-    const data = await fetch('http://localhost:3000/api/blogs/trending', {
+    const data = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs/trending`, {
         cache: 'force-cache',
     }).then((res) => res.json());
     const payload: Blog[] = data.data;
