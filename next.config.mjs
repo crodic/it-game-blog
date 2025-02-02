@@ -2,6 +2,10 @@
 const nextConfig = {
     experimental: {
         serverComponentsExternalPackages: ['@node-rs/argon2'],
+        staleTimes: {
+            dynamic: 0,
+            static: 0,
+        }
     },
     images: {
         remotePatterns: [

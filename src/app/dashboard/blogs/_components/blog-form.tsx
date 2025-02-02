@@ -8,15 +8,19 @@ import { CldUploadWidget, CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import Image from 'next/image';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-// import TinyMiceEditor from '@/components/tiny-editor';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TagInput, Tag } from 'emblor';
 import dynamic from 'next/dynamic';
 import { createBlog } from '../create/actions';
 import { toast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Trash } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { useQuery } from '@tanstack/react-query';
+import { getCategories } from '@/services/apis/categories';
+import { useRouter } from 'next/navigation';
 
 const TinyMiceEditor = dynamic(() => import('@/components/tiny-editor'), {
     loading: () => <div>Loading...</div>,
@@ -24,6 +28,7 @@ const TinyMiceEditor = dynamic(() => import('@/components/tiny-editor'), {
 });
 
 export default function BlogForm() {
+    const router = useRouter();
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [tags, setTags] = useState<Tag[]>([]);
     const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
@@ -38,6 +43,7 @@ export default function BlogForm() {
             thumbnail: '',
         },
     });
+    const { data } = useQuery({ queryKey: ['categories'], queryFn: getCategories });
 
     const isLoadingForm = form.formState.isSubmitting;
 
@@ -50,6 +56,7 @@ export default function BlogForm() {
                 title: 'Thành công!!!',
                 variant: 'default',
             });
+            router.push('/dashboard/blogs');
         } else {
             toast({
                 title: 'Lỗi!!!',
@@ -59,92 +66,120 @@ export default function BlogForm() {
         }
     };
 
+    const handleRemovePreviewImage = () => {
+        setPreviewImage(null);
+        form.setValue('thumbnail', '');
+    };
+
     return (
         <Form {...form}>
             <form className="grid sm:grid-cols-[1fr_400px] grid-cols-1 gap-8" onSubmit={form.handleSubmit(onSubmit)}>
-                <section className="space-y-4">
-                    <FormField
-                        name="title"
-                        control={form.control}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Tiêu Đề Bài Viết</FormLabel>
-                                <FormControl>
-                                    <Input disabled={isLoadingForm} placeholder="Nhập tiêu đề..." {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                <Card className="rounded-none">
+                    <CardHeader>
+                        <CardTitle className="uppercase">Bài Viết</CardTitle>
+                        <CardDescription>Nhập đủ các nội dung yêu cầu để có thể tạo bài viết</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <FormField
+                            name="title"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Tiêu Đề Bài Viết</FormLabel>
+                                    <FormControl>
+                                        <Input disabled={isLoadingForm} placeholder="Nhập tiêu đề..." {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                    <FormField
-                        name="thumbnail"
-                        control={form.control}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Thumbnail</FormLabel>
-                                {previewImage && (
-                                    <div className="relative w-[200px] aspect-square">
-                                        <Image
-                                            src={previewImage}
-                                            alt="preview"
-                                            fill
-                                            className="object-cover h-full w-full object-top"
+                        <FormField
+                            name="description"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Mô Tả Bài Viết</FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            rows={4}
+                                            disabled={isLoadingForm}
+                                            placeholder="Nhập mô tả..."
+                                            {...field}
                                         />
-                                    </div>
-                                )}
-                                <FormControl>
-                                    <div className="flex gap-4">
-                                        <CldUploadWidget
-                                            uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!}
-                                            onSuccess={(result) => {
-                                                field.onChange((result.info as CloudinaryUploadWidgetInfo)?.secure_url);
-                                                setPreviewImage(
-                                                    (result.info as CloudinaryUploadWidgetInfo)?.secure_url
-                                                );
-                                            }}
-                                            onError={(error) => {
-                                                console.error(error);
-                                            }}
-                                        >
-                                            {({ open }) => {
-                                                return (
-                                                    <Button
-                                                        disabled={isLoadingForm}
-                                                        type="button"
-                                                        onClick={() => open()}
-                                                    >
-                                                        Tải Lên Hình Ảnh
-                                                    </Button>
-                                                );
-                                            }}
-                                        </CldUploadWidget>
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                    <FormField
-                        name="content"
-                        control={form.control}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Nội Dung Bài Viết</FormLabel>
-                                <FormControl>
-                                    <TinyMiceEditor
-                                        disabled={isLoadingForm}
-                                        onChange={field.onChange}
-                                        value={field.value}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </section>
-                <Card className="sticky top-10 h-max">
+                        <FormField
+                            name="thumbnail"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Thumbnail</FormLabel>
+                                    {previewImage && (
+                                        <ImagePreview image={previewImage} removeCallback={handleRemovePreviewImage} />
+                                    )}
+                                    <FormControl>
+                                        <div className="flex gap-4">
+                                            {!previewImage && (
+                                                <CldUploadWidget
+                                                    uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!}
+                                                    onSuccess={(result, { close }) => {
+                                                        field.onChange(
+                                                            (result.info as CloudinaryUploadWidgetInfo)?.secure_url
+                                                        );
+                                                        setPreviewImage(
+                                                            (result.info as CloudinaryUploadWidgetInfo)?.secure_url
+                                                        );
+                                                        close();
+                                                    }}
+                                                    onError={(error) => {
+                                                        console.error(error);
+                                                    }}
+                                                >
+                                                    {({ open }) => {
+                                                        return (
+                                                            <Button
+                                                                disabled={isLoadingForm}
+                                                                type="button"
+                                                                onClick={() => open()}
+                                                            >
+                                                                Tải Lên Hình Ảnh
+                                                            </Button>
+                                                        );
+                                                    }}
+                                                </CldUploadWidget>
+                                            )}
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            name="content"
+                            control={form.control}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Nội Dung Bài Viết</FormLabel>
+                                    <FormControl>
+                                        <TinyMiceEditor
+                                            disabled={isLoadingForm}
+                                            onChange={field.onChange}
+                                            value={field.value}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </CardContent>
+                </Card>
+                <Card className="sticky top-10 h-max rounded-none">
                     <CardHeader>
                         <CardTitle>Danh Mục & Tags</CardTitle>
                     </CardHeader>
@@ -163,12 +198,15 @@ export default function BlogForm() {
                                                 defaultValue={field.value}
                                             >
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select a category" />
+                                                    <SelectValue placeholder="Chọn danh mục" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="1">React</SelectItem>
-                                                    <SelectItem value="2">Angular</SelectItem>
-                                                    <SelectItem value="3">Vue</SelectItem>
+                                                    {data &&
+                                                        data.map((category) => (
+                                                            <SelectItem key={category.id} value={category.id}>
+                                                                {category.name}
+                                                            </SelectItem>
+                                                        ))}
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
@@ -198,6 +236,22 @@ export default function BlogForm() {
                                     </FormItem>
                                 )}
                             />
+
+                            <FormField
+                                name="isPublished"
+                                control={form.control}
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col gap-2">
+                                        <FormLabel>Trạng Thái</FormLabel>
+                                        <FormControl>
+                                            <div className="flex gap-2 items-center">
+                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                                <span>{field.value ? 'Công khai' : 'Không công khai'}</span>
+                                            </div>
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
                         </div>
                     </CardContent>
                     <CardFooter>
@@ -208,5 +262,22 @@ export default function BlogForm() {
                 </Card>
             </form>
         </Form>
+    );
+}
+
+function ImagePreview({ image, removeCallback }: { image: string; removeCallback: () => void }) {
+    return (
+        <div className="relative w-[200px] aspect-square">
+            <Image src={image} alt="preview" fill className="object-cover h-full w-full object-top" />
+            <Button
+                onClick={removeCallback}
+                type="button"
+                size="icon"
+                variant="destructive"
+                className="absolute top-1 right-1"
+            >
+                <Trash className="size-4" />
+            </Button>
+        </div>
     );
 }

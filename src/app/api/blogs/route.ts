@@ -3,15 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export const GET = async () => {
     try {
-        const blogs = await prisma.blog.findMany({
-            take: 6,
-            orderBy: {
-                createdAt: 'desc',
-            },
-            where: {
-                isPublished: true,
-            },
-        });
+        const blogs = await prisma.blog.findMany();
         return Response.json({ status: 200, data: blogs }, { status: 200 });
     } catch (error: any) {
         console.error(error.message);

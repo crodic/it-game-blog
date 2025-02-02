@@ -10,15 +10,16 @@ export const createBlog = async (values: BlogSchema) => {
         if (!session) return { error: 'Vui lặng đăng nhập', data: null };
 
         const tags = values.tags.map((tag) => tag.text);
-        const data = await prisma.post.create({
+        const data = await prisma.blog.create({
             data: {
                 title: values.title,
                 content: values.content,
                 isPublished: values.isPublished,
                 thumbnail: values.thumbnail,
                 tags,
-                categoriesId: '67983e151264d864b60598f4',
+                categoriesId: values.categoriesId,
                 authorId: session.user.id,
+                description: values.description,
             },
         });
         return { error: null, data };

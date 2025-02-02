@@ -100,23 +100,9 @@ body {
     }
 }
 
-.blogs li:first-child .blog-card .blog-card__image img {
-    @apply md:h-64;
+table.expense-table {
+    table-layout: fixed;
 }
-
-.blogs li:last-child .blog-card .blog-card__image {
-    @apply md:basis-[49%];
-}
-
-.blogs li:last-child .blog-card .blog-card__content h4 {
-    @apply md:text-xl;
-}
-
-.blogs li:last-child .blog-card .blog-card__content p {
-    @apply md:line-clamp-5;
-}
-
-.blogs li:last-child .blog-card .blog-card__image img,
-.blogs li:last-child .blog-card {
-    @apply md:h-72;
+table.expense-table td {
+    overflow: hidden;
 }

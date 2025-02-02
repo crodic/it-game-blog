@@ -22,6 +22,7 @@ import { createCategory } from '../actions';
 import { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { Plus } from 'lucide-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function CategoryForm() {
     const [open, setOpen] = useState(false);
@@ -33,9 +34,13 @@ export default function CategoryForm() {
             color: '#000000',
         },
     });
+    const { mutateAsync } = useMutation({
+        mutationFn: createCategory,
+    });
+    const queryClient = useQueryClient();
 
     const onSubmit = async (values: CategorySchema) => {
-        const { error, data } = await createCategory(values);
+        const { error, data } = await mutateAsync(values);
         if (error) {
             toast({
                 title: 'Lỗi!!!',
@@ -45,6 +50,9 @@ export default function CategoryForm() {
         }
 
         if (data) {
+            queryClient.invalidateQueries({
+                queryKey: ['categories'],
+            });
             onClose();
             toast({
                 title: 'Thành công!',

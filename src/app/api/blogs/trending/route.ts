@@ -10,6 +10,7 @@ export const GET = async () => {
             },
             where: {
                 views: { gt: 100 },
+                isPublished: true,
             },
         });
         return Response.json({ status: 200, data: blogs }, { status: 200 });

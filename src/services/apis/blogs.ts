@@ -13,3 +13,10 @@ export const getNewBlogs = async () => {
     if (!res.ok) throw new Error(payload.message);
     return payload.data as Blog[];
 };
+
+export const getAllBlogs = async () => {
+    const res = await fetch('http://localhost:3000/api/blogs');
+    const payload = await res.json();
+    if (!res.ok) throw new Error(payload.message);
+    return payload.data as Blog[];
+};
