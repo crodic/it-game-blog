@@ -5,7 +5,6 @@ import { Blog } from '@prisma/client';
 export default async function BlogsTrending() {
     const data = await fetch('http://localhost:3000/api/blogs/trending', {
         cache: 'force-cache',
-        next: { revalidate: 60 },
     }).then((res) => res.json());
     const payload: Blog[] = data.data;
 

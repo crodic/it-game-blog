@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma';
 import { Blog } from '@prisma/client';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
+import CheckViewed from '../_components/check-viewed';
 
 const getBlog = cache(async (blogId: string) => {
     const post = await prisma.blog.findUnique({
@@ -28,6 +29,7 @@ export default async function BlogDetail({ params }: { params: { blogId: string 
     if (!post) redirect('/404');
     return (
         <div className="wrapper space-y-12">
+            <CheckViewed blogId={params.blogId} />
             <div className="content flex gap-16">
                 <div className="flex-1 flex flex-col gap-8">
                     <p className="text-sm text-primary opacity-45">{new Date(post.createdAt).toDateString()}</p>

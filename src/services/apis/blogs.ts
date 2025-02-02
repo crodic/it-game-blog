@@ -20,3 +20,8 @@ export const getAllBlogs = async () => {
     if (!res.ok) throw new Error(payload.message);
     return payload.data as Blog[];
 };
+
+export const getBlogList = async ({ page, limit, q }: { page: number; limit: number; q: string }) => {
+    const res = await fetch(`http://localhost:3000/api/blogs?q=${q}&page=${page}&limit=${limit}`);
+    return res.json();
+};

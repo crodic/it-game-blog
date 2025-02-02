@@ -7,7 +7,6 @@ const privateRoute = ['/dashboard'];
 const authRoute = ['/login'];
 
 export async function middleware(request: NextRequest) {
-    console.log('trigger middleware');
     // TODO: 1. Kiểm tra và update session khi cần thiết
     updateSession(request);
     const isAuth = await getSession(); // TODO: 2. Biến kiểm tra auth của user
