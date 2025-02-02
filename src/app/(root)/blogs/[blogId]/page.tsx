@@ -22,9 +22,9 @@ const getBlog = cache(async (blogId: string) => {
 
 export default async function BlogDetail({ params }: { params: { blogId: string } }) {
     const post = await getBlog(params.blogId);
-    const relatedBlogs = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs/related/${params.blogId}`).then(
-        (res) => res.json()
-    );
+    const relatedBlogs = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs/related/${params.blogId}`, {
+        next: { revalidate: 60 },
+    }).then((res) => res.json());
     const payload: Blog[] = relatedBlogs.data || [];
     if (!post) redirect('/404');
     return (
