@@ -6,6 +6,7 @@ import { ColumnDef } from '@tanstack/react-table';
 export const columns: ColumnDef<Category>[] = [
     {
         id: 'select',
+        size: 50,
         header: ({ table }) => (
             <Checkbox
                 checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
