@@ -19,13 +19,18 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { createCategory } from '../actions';
-import { useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { Plus } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useCategoryFormState } from '@/services/stores/category-form-state';
+import { useEffect } from 'react';
+import { useUpdateCategoryMutation } from '../mutations';
 
 export default function CategoryForm() {
-    const [open, setOpen] = useState(false);
+    const isOpen = useCategoryFormState((state) => state.isOpen);
+    const editData = useCategoryFormState((state) => state.editData);
+    const openForm = useCategoryFormState((state) => state.open);
+    const closeForm = useCategoryFormState((state) => state.close);
     const form = useForm<CategorySchema>({
         resolver: zodResolver(categorySchema),
         defaultValues: {
@@ -37,46 +42,89 @@ export default function CategoryForm() {
     const { mutateAsync } = useMutation({
         mutationFn: createCategory,
     });
+    const { mutateAsync: updateCategory } = useUpdateCategoryMutation();
     const queryClient = useQueryClient();
 
     const onSubmit = async (values: CategorySchema) => {
-        const { error, data } = await mutateAsync(values);
-        if (error) {
-            toast({
-                title: 'Lỗi!!!',
-                description: error,
-                variant: 'destructive',
-            });
-        }
+        if (editData) {
+            const { error, data } = await updateCategory({ id: editData.id, values });
+            if (error) {
+                toast({
+                    title: 'Lỗi!!!',
+                    description: error,
+                    variant: 'destructive',
+                });
+            }
+            if (data) {
+                queryClient.invalidateQueries({
+                    queryKey: ['categories'],
+                });
+                closeForm();
+                form.reset({
+                    color: '#000000',
+                    description: '',
+                    name: '',
+                });
+                toast({
+                    title: 'Thành công!',
+                    description: 'Danh mục ' + data.name + ' đã được cập nhật thành công',
+                    variant: 'default',
+                });
+            }
+        } else {
+            const { error, data } = await mutateAsync(values);
+            if (error) {
+                toast({
+                    title: 'Lỗi!!!',
+                    description: error,
+                    variant: 'destructive',
+                });
+            }
 
-        if (data) {
-            queryClient.invalidateQueries({
-                queryKey: ['categories'],
-            });
-            onClose();
-            toast({
-                title: 'Thành công!',
-                description: 'Danh mục ' + data.name + ' đa da thành công',
-                variant: 'default',
+            if (data) {
+                queryClient.invalidateQueries({
+                    queryKey: ['categories'],
+                });
+                closeForm();
+                form.reset({
+                    color: '#000000',
+                    description: '',
+                    name: '',
+                });
+                toast({
+                    title: 'Thành công!',
+                    description: 'Danh mục ' + data.name + ' đa da thành công',
+                    variant: 'default',
+                });
+            }
+        }
+    };
+
+    const onOpenChange = (open: boolean) => {
+        if (open) {
+            openForm();
+        } else {
+            closeForm();
+            form.reset({
+                color: '#000000',
+                description: '',
+                name: '',
             });
         }
     };
 
-    const onClose = () => {
-        form.reset({});
-        setOpen(false);
-    };
+    useEffect(() => {
+        if (editData) {
+            form.reset({
+                name: editData.name,
+                description: editData.description as string,
+                color: editData.color,
+            });
+        }
+    }, [editData, form]);
 
     return (
-        <Dialog
-            open={open}
-            onOpenChange={(open) => {
-                setOpen(open);
-                if (!open) {
-                    form.reset({});
-                }
-            }}
-        >
+        <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogTrigger asChild>
                 <Button>
                     <Plus className="size-4" />
