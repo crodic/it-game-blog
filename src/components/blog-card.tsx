@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Image from 'next/image';
 import { Badge } from './ui/badge';
 import { Blog } from '@prisma/client';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next-nprogress-bar';
 
 interface BlogCardProps {
     showDescription?: boolean;
