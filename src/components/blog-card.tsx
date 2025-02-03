@@ -25,7 +25,13 @@ export default function BlogCard({ showDescription, data, hiddenTags }: BlogCard
         >
             <CardHeader className="p-0 pb-4">
                 <div className="relative w-full aspect-video">
-                    <Image src={data.thumbnail} alt="test" fill className="object-cover object-top" />
+                    <Image
+                        src={data.thumbnail}
+                        alt="test"
+                        fill
+                        className="object-cover object-top"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
                 </div>
             </CardHeader>
             <CardContent className="flex flex-col gap-2">

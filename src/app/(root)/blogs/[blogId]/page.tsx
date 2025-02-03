@@ -7,11 +7,15 @@ import { Blog } from '@prisma/client';
 import { redirect } from 'next/navigation';
 import { cache } from 'react';
 import CheckViewed from '../_components/check-viewed';
+import { Badge } from '@/components/ui/badge';
 
 const getBlog = cache(async (blogId: string) => {
     const post = await prisma.blog.findUnique({
         where: {
             id: blogId,
+        },
+        include: {
+            category: true,
         },
     });
 
@@ -32,8 +36,17 @@ export default async function BlogDetail({ params }: { params: { blogId: string 
             <CheckViewed blogId={params.blogId} />
             <div className="content flex gap-8 md:gap-16 w-full">
                 <div className="flex-1 flex flex-col gap-8 w-full">
-                    <p className="text-sm text-primary opacity-45">{new Date(post.createdAt).toDateString()}</p>
-                    <h3 className="text-4xl font-bold">{post.title}</h3>
+                    <div className="space-y-2">
+                        <Badge background={post.category.color}>{post.category.name}</Badge>
+                        <p className="text-sm text-primary opacity-70">{new Date(post.createdAt).toDateString()} </p>
+                        <h3 className="text-4xl font-bold">{post.title}</h3>
+                        <div className="space-x-2">
+                            {post.tags.map((tag) => (
+                                <Badge key={tag}>{tag}</Badge>
+                            ))}
+                        </div>
+                    </div>
+                    <Separator className="border-primary" />
                     <main
                         className="h-max prose w-fit max-w-none"
                         dangerouslySetInnerHTML={{ __html: post.content }}

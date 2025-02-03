@@ -62,7 +62,7 @@ export const PUT = (request: NextRequest) => {
             },
         });
         prisma.$transaction([updateBlog]);
-        cookieStore.set('viewed', '1', { expires: new Date(Date.now() + 24 * 60 * 24 * 1000), httpOnly: true });
+        cookieStore.set('viewed', '1', { expires: new Date(Date.now() + 5 * 60 * 1000), httpOnly: true });
         return Response.json({ status: 200, message: 'Viewed blog successfully' }, { status: 200 });
     } catch (error) {
         console.log(error);

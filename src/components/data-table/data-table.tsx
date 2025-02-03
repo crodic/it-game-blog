@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 export function DataTable<TData>({ table }: { table: RTable<TData> }) {
     return (
         <div className="rounded-md border w-full overflow-auto">
-            <div className="min-w-[800px]">
+            <div className="min-w-[800px] max-h-80">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (

@@ -1,3 +1,4 @@
+import { DataTableColumnHeader } from '@/components/data-table/column-header';
 import { Blog } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import Image from 'next/image';
@@ -6,6 +7,11 @@ export const columns: ColumnDef<Blog>[] = [
     {
         accessorKey: 'title',
         header: 'Tên Bài Viết',
+        cell: ({ row }) => (
+            <a className="hover:text-primary" href={`/blogs/${row.original.id}`} target="_blank">
+                {row.original.title.length > 50 ? row.original.title.slice(0, 50) + '...' : row.original.title}
+            </a>
+        ),
     },
     {
         accessorKey: 'thumbnail',
@@ -14,8 +20,8 @@ export const columns: ColumnDef<Blog>[] = [
             <Image
                 src={row.original.thumbnail}
                 alt={row.original.title}
-                width={100}
-                height={100}
+                width={500}
+                height={500}
                 className="object-cover aspect-square object-top w-full"
             />
         ),
@@ -25,7 +31,9 @@ export const columns: ColumnDef<Blog>[] = [
         accessorKey: 'description',
         header: 'Mô Tả',
         size: 200,
-        cell: ({ row }) => row.original.description.slice(0, 100) + '...',
+        enableHiding: true,
+        cell: ({ row }) =>
+            row.original.title.length > 100 ? row.original.title.slice(0, 100) + '...' : row.original.title,
     },
     {
         accessorKey: 'isPublished',
@@ -34,9 +42,10 @@ export const columns: ColumnDef<Blog>[] = [
     },
     {
         accessorKey: 'views',
-        header: 'Lượt Xem',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Lượt Xem" />,
         cell: ({ row }) => row.original.views,
         maxSize: 100,
+        enableSorting: true,
     },
     {
         accessorKey: 'createdAt',

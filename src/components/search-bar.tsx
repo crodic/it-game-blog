@@ -20,9 +20,9 @@ export default function SearchBar() {
             newSearchParams.delete('page');
             newSearchParams.delete('limit');
             newSearchParams.set('q', value);
-            router.push(`?${newSearchParams.toString()}`);
+            router.push(`/blogs?${newSearchParams.toString()}`);
         } else if (e.key === 'Enter') {
-            router.push('?');
+            router.push('/blogs');
         }
     };
 
