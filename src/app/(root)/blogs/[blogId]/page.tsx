@@ -1,13 +1,15 @@
-import { CarouselBlogs } from '@/components/carousel-blogs';
 import SearchBar from '@/components/search-bar';
 import SideBlogs from '@/components/side-blogs';
 import { Separator } from '@/components/ui/separator';
 import { prisma } from '@/lib/prisma';
-import { Blog } from '@prisma/client';
-import { redirect } from 'next/navigation';
-import { cache } from 'react';
+import { notFound } from 'next/navigation';
+import { cache, Suspense } from 'react';
 import CheckViewed from '../_components/check-viewed';
 import { Badge } from '@/components/ui/badge';
+import RelatedBlogs from '../_components/related-blogs';
+
+export const revalidate = 60;
+export const dynamic = 'force-static';
 
 const getBlog = cache(async (blogId: string) => {
     const post = await prisma.blog.findUnique({
@@ -24,13 +26,23 @@ const getBlog = cache(async (blogId: string) => {
     return post;
 });
 
+export async function generateStaticParams() {
+    try {
+        const blogs = await prisma.blog.findMany({
+            select: { id: true },
+            take: 4,
+            where: { isPublished: true, views: { gt: 100 } },
+        });
+        return blogs.map((blog) => ({ blogId: blog.id }));
+    } catch (error) {
+        console.log(error);
+        return [];
+    }
+}
+
 export default async function BlogDetail({ params }: { params: { blogId: string } }) {
     const post = await getBlog(params.blogId);
-    const relatedBlogs = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs/related/${params.blogId}`, {
-        next: { revalidate: 60 },
-    }).then((res) => res.json());
-    const payload: Blog[] = relatedBlogs.data || [];
-    if (!post) redirect('/404');
+    if (!post) notFound();
     return (
         <div className="wrapper space-y-12">
             <CheckViewed blogId={params.blogId} />
@@ -56,7 +68,7 @@ export default async function BlogDetail({ params }: { params: { blogId: string 
                             <h4 className="text-xl font-semibold">Bài viết liên quan</h4>{' '}
                             <Separator className="border-2 border-primary" />
                         </div>
-                        <CarouselBlogs blogs={payload} />
+                        <RelatedBlogs blogId={params.blogId} />
                     </div>
                 </div>
                 <div className="hidden lg:block space-y-16 w-72">
@@ -65,7 +77,9 @@ export default async function BlogDetail({ params }: { params: { blogId: string 
                             <h6 className="text-base font-semibold">Tìm kiếm bài viết</h6>
                             <Separator className="border-2 border-primary" />
                         </div>
-                        <SearchBar />
+                        <Suspense>
+                            <SearchBar />
+                        </Suspense>
                     </div>
                     <SideBlogs />
                 </div>
