@@ -3,6 +3,7 @@ import './globals.css';
 import Providers from '@/components/providers';
 import { Dancing_Script } from 'next/font/google';
 import { Toaster } from '@/components/ui/toaster';
+import 'sweetalert2/src/sweetalert2.scss';
 
 export const metadata: Metadata = {
     title: 'Create Next App',

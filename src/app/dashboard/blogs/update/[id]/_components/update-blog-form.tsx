@@ -22,6 +22,8 @@ import { getCategories } from '@/services/apis/categories';
 import { useRouter } from 'next/navigation';
 import { updateBlog } from '../actions';
 import { getBlogDetail } from '@/services/apis/blogs';
+import Swal from 'sweetalert2';
+import Link from 'next/link';
 
 const TinyMiceEditor = dynamic(() => import('@/components/tiny-editor'), {
     loading: () => <div>Loading...</div>,
@@ -31,7 +33,6 @@ const TinyMiceEditor = dynamic(() => import('@/components/tiny-editor'), {
 export default function UpdateBlogForm({ blogId }: { blogId: string }) {
     const router = useRouter();
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const [isResetForm, setIsResetForm] = useState(false);
     const [tags, setTags] = useState<Tag[]>([]);
     const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
     const form = useForm<BlogSchema>({
@@ -46,27 +47,46 @@ export default function UpdateBlogForm({ blogId }: { blogId: string }) {
         },
     });
     const { data } = useQuery({ queryKey: ['categories'], queryFn: getCategories });
-    const { data: blogDetail } = useQuery({ queryKey: ['blog', blogId], queryFn: () => getBlogDetail(blogId) });
+    const { data: blogDetail, isPending } = useQuery({
+        queryKey: ['blog', blogId],
+        queryFn: () => getBlogDetail(blogId),
+        enabled: !!blogId && !!data,
+    });
 
     const isLoadingForm = form.formState.isSubmitting;
+    const isFormDirty = form.formState.isDirty;
 
     const onSubmit = async (values: BlogSchema) => {
-        const { error } = await updateBlog(values, blogId);
-        if (!error) {
-            form.reset();
-            setPreviewImage(null);
-            toast({
-                title: 'Thành công!!!',
-                variant: 'default',
-            });
-            router.push('/dashboard/blogs');
-        } else {
-            toast({
-                title: 'Lỗi!!!',
-                description: error,
-                variant: 'destructive',
-            });
-        }
+        Swal.fire({
+            title: 'Cập nhật bài viết?',
+            text: 'Hành động này sẽ không thể hoàn tác!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Xác nhận!',
+            cancelButtonText: 'Huỷ',
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const { error } = await updateBlog(values, blogId);
+                if (!error) {
+                    form.reset();
+                    setPreviewImage(null);
+                    Swal.fire({
+                        title: 'Đã cập nhật!',
+                        text: 'Bài viết cập nhật thành công.',
+                        icon: 'success',
+                    });
+                    router.push('/dashboard/blogs');
+                } else {
+                    toast({
+                        title: 'Lỗi!!!',
+                        description: error,
+                        variant: 'destructive',
+                    });
+                }
+            }
+        });
     };
 
     const handleRemovePreviewImage = () => {
@@ -89,7 +109,6 @@ export default function UpdateBlogForm({ blogId }: { blogId: string }) {
 
     useEffect(() => {
         if (!blogDetail) return;
-        setIsResetForm(true);
         form.reset({
             title: blogDetail.title,
             content: blogDetail.content,
@@ -107,14 +126,12 @@ export default function UpdateBlogForm({ blogId }: { blogId: string }) {
         if (blogDetail.tags) {
             setTags(blogDetail.tags.map((tag) => ({ id: tag, text: tag })));
         }
-
-        setIsResetForm(false);
     }, [blogDetail, form]);
 
     return (
         <Form {...form}>
-            {isResetForm && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-[5000000]">
+            {isPending && (
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-10 !m-0">
                     <div className="flex items-center gap-2 p-3 bg-white shadow-lg rounded">
                         <svg
                             className="animate-spin h-5 w-5 text-blue-500"
@@ -319,9 +336,14 @@ export default function UpdateBlogForm({ blogId }: { blogId: string }) {
                             />
                         </div>
                     </CardContent>
-                    <CardFooter>
-                        <Button className="w-full" type="submit" disabled={isLoadingForm}>
+                    <CardFooter className="flex-col gap-2">
+                        <Button className="w-full" type="submit" disabled={isLoadingForm || !isFormDirty}>
                             {isLoadingForm ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Cập Nhật Bài Viết'}
+                        </Button>
+                        <Button className="w-full" variant="outline">
+                            <Link prefetch href="/dashboard/blogs">
+                                Quay Lại
+                            </Link>
                         </Button>
                     </CardFooter>
                 </Card>

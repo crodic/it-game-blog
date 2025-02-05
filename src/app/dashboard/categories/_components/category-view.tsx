@@ -28,6 +28,7 @@ import { useDeleteCategoryMutation } from '../mutations';
 import { toast } from '@/hooks/use-toast';
 import { Category } from '@prisma/client';
 import { useCategoryFormState } from '@/services/stores/category-form-state';
+import Swal from 'sweetalert2';
 
 export default function CategoryView() {
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -40,24 +41,38 @@ export default function CategoryView() {
     const { setEditData, open } = useCategoryFormState();
 
     const handleDelete = (row: Row<Category>) => {
-        mutateAsync(row.original.id, {
-            onSuccess: (data) => {
-                if (data.error) {
-                    toast({
-                        title: 'Lỗi! ',
-                        description: data.error,
-                        variant: 'destructive',
-                    });
-                } else {
-                    queryClient.invalidateQueries({
-                        queryKey: ['categories'],
-                    });
-                    toast({
-                        title: 'Thành công! ',
-                        description: 'Xoá danh mục ' + row.original.name + ' thành công',
-                    });
-                }
-            },
+        Swal.fire({
+            title: 'Bạn muốn xoá danh mục này?',
+            text: 'Hành động này sẽ không thể hoàn tác!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Vâng, xoá nó!',
+            cancelButtonText: 'Huỷ',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                mutateAsync(row.original.id, {
+                    onSuccess: (data) => {
+                        if (data.error) {
+                            toast({
+                                title: 'Lỗi!',
+                                description: data.error,
+                                variant: 'destructive',
+                            });
+                        } else {
+                            queryClient.invalidateQueries({
+                                queryKey: ['categories'],
+                            });
+                            Swal.fire({
+                                title: 'Đã xoá!',
+                                text: `Danh mục ${row.original.name} đã xoá thành công`,
+                                icon: 'success',
+                            });
+                        }
+                    },
+                });
+            }
         });
     };
 

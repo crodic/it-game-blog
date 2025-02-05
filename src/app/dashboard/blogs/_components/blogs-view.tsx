@@ -19,6 +19,7 @@ import { useDeleteBlogMutation } from '../mutations';
 import { toast } from '@/hooks/use-toast';
 import { Blog } from '@prisma/client';
 import { useRouter } from 'next-nprogress-bar';
+import Swal from 'sweetalert2';
 
 export default function BlogsView() {
     const router = useRouter();
@@ -30,24 +31,37 @@ export default function BlogsView() {
     const { mutateAsync } = useDeleteBlogMutation();
 
     const handleDelete = (row: Row<Blog>) => {
-        mutateAsync(row.original.id, {
-            onSuccess: (data) => {
-                if (data.error) {
-                    toast({
-                        title: 'Lỗi! ',
-                        description: data.error,
-                        variant: 'destructive',
-                    });
-                } else {
-                    queryClient.invalidateQueries({
-                        queryKey: ['blogs'],
-                    });
-                    toast({
-                        title: 'Thành công! ',
-                        description: 'Xoá bài viết ' + row.original.title + ' thành công',
-                    });
-                }
-            },
+        Swal.fire({
+            title: 'Bạn muốn xoá bài viết này?',
+            text: 'Hành động này sẽ không thể hoàn tác!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Vâng, xoá nó!',
+            cancelButtonText: 'Huỷ',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                mutateAsync(row.original.id, {
+                    onSuccess: (data) => {
+                        if (data.error) {
+                            toast({
+                                title: 'Lỗi! ',
+                                description: data.error,
+                                variant: 'destructive',
+                            });
+                        } else {
+                            queryClient.invalidateQueries({
+                                queryKey: ['blogs'],
+                            });
+                            toast({
+                                title: 'Thành công! ',
+                                description: 'Xoá bài viết ' + row.original.title + ' thành công',
+                            });
+                        }
+                    },
+                });
+            }
         });
     };
 

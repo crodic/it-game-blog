@@ -5,7 +5,7 @@ import BlogsView from './_components/blogs-view';
 
 export default function Page() {
     return (
-        <main className="space-y-8">
+        <div className="space-y-8">
             <Link href="blogs/create">
                 <Button>
                     <Plus className="size-4" />
@@ -14,6 +14,6 @@ export default function Page() {
             </Link>
 
             <BlogsView />
-        </main>
+        </div>
     );
 }

@@ -110,6 +110,7 @@ export async function updateSession(request: NextRequest) {
         const after15minute = 15 * 60 * 1000; //? 15 minutes
         // TODO: Check if remaining time is less than 15 minutes
         if (remainingTime < after15minute) {
+            console.log('Session gần hết hạn update session');
             parsed.expires = new Date(Date.now() + 1 * 60 * 60 * 1000); //? Set new expiration time to 1 hour
             // TODO: Update session cookie
             res.cookies.set({
