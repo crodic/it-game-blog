@@ -18,11 +18,13 @@ import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 import { useDeleteBlogMutation } from '../mutations';
 import { toast } from '@/hooks/use-toast';
 import { Blog } from '@prisma/client';
+import { useRouter } from 'next-nprogress-bar';
 
 export default function BlogsView() {
+    const router = useRouter();
     const { data } = useQuery({
         queryKey: ['blogs'],
-        queryFn: getAllBlogs,
+        queryFn: () => getAllBlogs(true),
     });
     const queryClient = useQueryClient();
     const { mutateAsync } = useDeleteBlogMutation();
@@ -65,7 +67,10 @@ export default function BlogsView() {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <DropdownMenuItem className="cursor-pointer">
+                                <DropdownMenuItem
+                                    className="cursor-pointer"
+                                    onClick={() => router.push(`/dashboard/blogs/update/${row.original.id}`)}
+                                >
                                     <Edit className="mr-2 h-4 w-4" />
                                     Sửa bài viết
                                 </DropdownMenuItem>

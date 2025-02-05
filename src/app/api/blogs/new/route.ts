@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from '@/lib/prisma';
 
+export const revalidate = 60;
+
 export const GET = async () => {
     try {
         const blogs = await prisma.blog.findMany({

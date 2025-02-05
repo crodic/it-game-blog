@@ -15,6 +15,7 @@ const getBlog = cache(async (blogId: string) => {
     const post = await prisma.blog.findUnique({
         where: {
             id: blogId,
+            isPublished: true,
         },
         include: {
             category: true,
@@ -47,22 +48,25 @@ export default async function BlogDetail({ params }: { params: { blogId: string 
         <div className="wrapper space-y-12">
             <CheckViewed blogId={params.blogId} />
             <div className="content flex gap-8 md:gap-16 w-full">
-                <div className="flex-1 flex flex-col gap-8 w-full">
+                <div className="flex-1 flex flex-col gap-4 w-full">
                     <div className="space-y-2">
                         <Badge background={post.category.color}>{post.category.name}</Badge>
                         <p className="text-sm text-primary opacity-70">{new Date(post.createdAt).toDateString()} </p>
                         <h3 className="text-4xl font-bold">{post.title}</h3>
-                        <div className="space-x-2">
-                            {post.tags.map((tag) => (
-                                <Badge key={tag}>{tag}</Badge>
-                            ))}
-                        </div>
+                        <span className="text-xs text-muted-foreground">Lượt xem: {post.views}</span>
                     </div>
                     <Separator className="border-primary" />
                     <main
                         className="h-max prose w-fit max-w-none"
                         dangerouslySetInnerHTML={{ __html: post.content }}
                     ></main>
+                    <div className="flex items-center gap-2">
+                        <p>Tags: </p>
+                        {post.tags.map((tag) => (
+                            <Badge key={tag}>{tag}</Badge>
+                        ))}
+                    </div>
+                    <Separator className="border-primary" />
                     <div className="space-y-4">
                         <div className="w-max">
                             <h4 className="text-xl font-semibold">Bài viết liên quan</h4>{' '}

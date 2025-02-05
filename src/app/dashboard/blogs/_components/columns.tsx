@@ -2,6 +2,7 @@ import { DataTableColumnHeader } from '@/components/data-table/column-header';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Blog } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
+import { Check, X } from 'lucide-react';
 import Image from 'next/image';
 
 export const columns: ColumnDef<Blog>[] = [
@@ -59,7 +60,15 @@ export const columns: ColumnDef<Blog>[] = [
     {
         accessorKey: 'isPublished',
         header: 'Công Khai',
-        cell: ({ row }) => (row.original.isPublished ? 'Yes' : 'No'),
+        cell: ({ row }) => (
+            <div className="flex items-center justify-center">
+                {row.original.isPublished ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                ) : (
+                    <X className="h-4 w-4 text-destructive" />
+                )}
+            </div>
+        ),
     },
     {
         accessorKey: 'views',

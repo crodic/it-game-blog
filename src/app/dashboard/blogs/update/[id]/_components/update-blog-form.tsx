@@ -20,16 +20,18 @@ import { Switch } from '@/components/ui/switch';
 import { useQuery } from '@tanstack/react-query';
 import { getCategories } from '@/services/apis/categories';
 import { useRouter } from 'next/navigation';
-import { createBlog } from '../actions';
+import { updateBlog } from '../actions';
+import { getBlogDetail } from '@/services/apis/blogs';
 
 const TinyMiceEditor = dynamic(() => import('@/components/tiny-editor'), {
     loading: () => <div>Loading...</div>,
     ssr: false,
 });
 
-export default function BlogForm() {
+export default function UpdateBlogForm({ blogId }: { blogId: string }) {
     const router = useRouter();
     const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [isResetForm, setIsResetForm] = useState(false);
     const [tags, setTags] = useState<Tag[]>([]);
     const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
     const form = useForm<BlogSchema>({
@@ -44,11 +46,12 @@ export default function BlogForm() {
         },
     });
     const { data } = useQuery({ queryKey: ['categories'], queryFn: getCategories });
+    const { data: blogDetail } = useQuery({ queryKey: ['blog', blogId], queryFn: () => getBlogDetail(blogId) });
 
     const isLoadingForm = form.formState.isSubmitting;
 
     const onSubmit = async (values: BlogSchema) => {
-        const { error } = await createBlog(values);
+        const { error } = await updateBlog(values, blogId);
         if (!error) {
             form.reset();
             setPreviewImage(null);
@@ -84,8 +87,55 @@ export default function BlogForm() {
         };
     }, []);
 
+    useEffect(() => {
+        if (!blogDetail) return;
+        setIsResetForm(true);
+        form.reset({
+            title: blogDetail.title,
+            content: blogDetail.content,
+            categoriesId: blogDetail.categoriesId,
+            isPublished: blogDetail.isPublished,
+            tags: blogDetail.tags.map((tag) => ({ id: tag, text: tag })),
+            thumbnail: blogDetail.thumbnail,
+            description: blogDetail.description,
+        });
+
+        if (blogDetail.thumbnail) {
+            setPreviewImage(blogDetail.thumbnail);
+        }
+
+        if (blogDetail.tags) {
+            setTags(blogDetail.tags.map((tag) => ({ id: tag, text: tag })));
+        }
+
+        setIsResetForm(false);
+    }, [blogDetail, form]);
+
     return (
         <Form {...form}>
+            {isResetForm && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-[5000000]">
+                    <div className="flex items-center gap-2 p-3 bg-white shadow-lg rounded">
+                        <svg
+                            className="animate-spin h-5 w-5 text-blue-500"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                            ></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                        <span>Đang tải dữ liệu...</span>
+                    </div>
+                </div>
+            )}
             <form className="grid sm:grid-cols-[1fr_400px] grid-cols-1 gap-8" onSubmit={form.handleSubmit(onSubmit)}>
                 <Card className="rounded-none">
                     <CardHeader>
@@ -184,6 +234,7 @@ export default function BlogForm() {
                                             disabled={isLoadingForm}
                                             onChange={field.onChange}
                                             value={field.value}
+                                            initialValue={blogDetail?.content || ''}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -209,6 +260,7 @@ export default function BlogForm() {
                                                 disabled={isLoadingForm}
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
+                                                value={field.value}
                                             >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Chọn danh mục" />
@@ -269,7 +321,7 @@ export default function BlogForm() {
                     </CardContent>
                     <CardFooter>
                         <Button className="w-full" type="submit" disabled={isLoadingForm}>
-                            {isLoadingForm ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Tạo Bài Viết'}
+                            {isLoadingForm ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Cập Nhật Bài Viết'}
                         </Button>
                     </CardFooter>
                 </Card>

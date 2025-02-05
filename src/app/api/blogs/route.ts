@@ -8,6 +8,7 @@ export const GET = async (request: NextRequest) => {
     const page = searchParams.get('page') || '1';
     const limit = searchParams.get('limit') || '10';
     const q = searchParams.get('q') || '';
+    const isDashboard = Boolean(searchParams.get('isDashboard'));
     try {
         const skip = (Number(page) - 1) * Number(limit);
         const blogs = await prisma.blog.findMany({
@@ -30,7 +31,7 @@ export const GET = async (request: NextRequest) => {
                         },
                     },
                 ],
-                isPublished: true,
+                isPublished: isDashboard ? undefined : true,
             },
         });
         const total = await prisma.blog.count();
