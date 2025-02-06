@@ -14,6 +14,7 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import useSession from '@/hooks/useSession';
 import { logout } from '@/actions/auth';
+import { useRouter } from 'next-nprogress-bar';
 
 export function NavUser({
     user,
@@ -26,6 +27,7 @@ export function NavUser({
 }) {
     const { isMobile } = useSidebar();
     const { session } = useSession();
+    const router = useRouter();
 
     const handleLogout = async () => {
         await logout();
@@ -71,7 +73,7 @@ export function NavUser({
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => router.push('/dashboard/account')}>
                                 <BadgeCheck />
                                 Tài khoản
                             </DropdownMenuItem>
