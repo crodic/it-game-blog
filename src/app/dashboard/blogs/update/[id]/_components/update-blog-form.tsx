@@ -7,14 +7,13 @@ import { useForm } from 'react-hook-form';
 import { CldUploadWidget, CloudinaryUploadWidgetInfo } from 'next-cloudinary';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TagInput, Tag } from 'emblor';
 import dynamic from 'next/dynamic';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, Trash } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { useQuery } from '@tanstack/react-query';
@@ -24,6 +23,7 @@ import { updateBlog } from '../actions';
 import { getBlogDetail } from '@/services/apis/blogs';
 import Swal from 'sweetalert2';
 import Link from 'next/link';
+import ImagePreview from '@/components/image-preview';
 
 const TinyMiceEditor = dynamic(() => import('@/components/tiny-editor'), {
     loading: () => <div>Loading...</div>,
@@ -349,22 +349,5 @@ export default function UpdateBlogForm({ blogId }: { blogId: string }) {
                 </Card>
             </form>
         </Form>
-    );
-}
-
-function ImagePreview({ image, removeCallback }: { image: string; removeCallback: () => void }) {
-    return (
-        <div className="relative w-[200px] aspect-square">
-            <Image src={image} alt="preview" fill className="object-cover h-full w-full object-top" />
-            <Button
-                onClick={removeCallback}
-                type="button"
-                size="icon"
-                variant="destructive"
-                className="absolute top-1 right-1"
-            >
-                <Trash className="size-4" />
-            </Button>
-        </div>
     );
 }
