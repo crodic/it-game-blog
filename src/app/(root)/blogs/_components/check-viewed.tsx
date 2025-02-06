@@ -11,9 +11,13 @@ export default function CheckViewed({ blogId }: { blogId: string }) {
     }, [blogId]);
 
     useEffect(() => {
-        if (promise.current) return;
-        promise.current = handleIncrementView;
-        promise.current();
+        const timer = setTimeout(() => {
+            if (promise.current) return;
+            promise.current = handleIncrementView;
+            promise.current();
+        }, 30 * 1000);
+
+        return () => clearTimeout(timer);
     }, [handleIncrementView]);
 
     return null;

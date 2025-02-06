@@ -67,13 +67,8 @@ export default async function BlogDetail({ params }: { params: { blogId: string 
                         ))}
                     </div>
                     <Separator className="border-primary" />
-                    <div className="space-y-4">
-                        <div className="w-max">
-                            <h4 className="text-xl font-semibold">Bài viết liên quan</h4>{' '}
-                            <Separator className="border-2 border-primary" />
-                        </div>
-                        <RelatedBlogs blogId={params.blogId} />
-                    </div>
+
+                    <RelatedBlogs blogId={params.blogId} />
                 </div>
                 <div className="hidden lg:block space-y-16 w-72">
                     <div className="space-y-4">

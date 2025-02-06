@@ -62,7 +62,7 @@ export async function login(values: AuthSchema) {
         role: user.role,
     };
 
-    const expires = new Date(Date.now() + 2 * 60 * 1000);
+    const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const session = await encrypt({ user: dataSession, expires });
 
     cookies().set('session', session, { expires, httpOnly: true });
@@ -101,11 +101,11 @@ export async function updateSession(request: NextRequest): Promise<UpdateSession
         const currentTime = Date.now(); //? Get current time
         const sessionExpires = new Date(parsed.expires).getTime(); //? Get expiration time
         const remainingTime = sessionExpires - currentTime; //? Get remaining time
-        const after15minute = 1 * 60 * 1000; //? 15 minutes
+        const after1days = 1 * 24 * 60 * 60 * 1000;
         // TODO: Check if remaining time is less than 15 minutes
-        if (remainingTime < after15minute) {
+        if (remainingTime < after1days) {
             console.log('Session cũ:', session);
-            parsed.expires = new Date(Date.now() + 2 * 60 * 1000);
+            parsed.expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
             const newValue = await encrypt(parsed);
             console.log('Session updated:', newValue);
             return {
