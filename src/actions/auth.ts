@@ -1,11 +1,10 @@
 'use server';
-
 import { decrypt, encrypt } from '@/lib/jwt';
 import { prisma } from '@/lib/prisma';
 import { AuthSchema } from '@/validations/auth.schema';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { User } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
@@ -63,7 +62,7 @@ export async function login(values: AuthSchema) {
         role: user.role,
     };
 
-    const expires = new Date(Date.now() + 1 * 60 * 60 * 1000);
+    const expires = new Date(Date.now() + 2 * 60 * 1000);
     const session = await encrypt({ user: dataSession, expires });
 
     cookies().set('session', session, { expires, httpOnly: true });
@@ -72,18 +71,8 @@ export async function login(values: AuthSchema) {
 }
 
 export async function logout() {
-    // Destroy the session
     cookies().delete('session');
     redirect('/login');
-}
-
-export async function getCurrentUser() {
-    const session = await getSession();
-    if (!session) return null;
-
-    return {
-        email: session.user.email,
-    };
 }
 
 export async function getSession(): Promise<UserSession | null> {
@@ -92,34 +81,41 @@ export async function getSession(): Promise<UserSession | null> {
     return await decrypt(session);
 }
 
-export async function updateSession(request: NextRequest) {
+interface UpdateSessionResult {
+    redirect?: string;
+    newCookie?: {
+        name: string;
+        value: string;
+        options: { httpOnly: boolean; expires: Date };
+    };
+}
+
+export async function updateSession(request: NextRequest): Promise<UpdateSessionResult> {
     const session = request.cookies.get('session')?.value;
-    if (!session) return;
+    if (!session) return {};
 
-    const res = NextResponse.next();
-
-    // Refresh the session so it doesn't expire
     const parsed = await decrypt<UserSession>(session);
     if (!parsed) {
-        res.cookies.delete('session');
-        return NextResponse.redirect(new URL('/login', request.url));
+        return { redirect: '/login' };
     } else {
         const currentTime = Date.now(); //? Get current time
         const sessionExpires = new Date(parsed.expires).getTime(); //? Get expiration time
         const remainingTime = sessionExpires - currentTime; //? Get remaining time
-        const after15minute = 15 * 60 * 1000; //? 15 minutes
+        const after15minute = 1 * 60 * 1000; //? 15 minutes
         // TODO: Check if remaining time is less than 15 minutes
         if (remainingTime < after15minute) {
-            console.log('Session gần hết hạn update session');
-            parsed.expires = new Date(Date.now() + 1 * 60 * 60 * 1000); //? Set new expiration time to 1 hour
-            // TODO: Update session cookie
-            res.cookies.set({
-                name: 'session',
-                value: await encrypt(parsed),
-                httpOnly: true,
-                expires: parsed.expires,
-            });
+            console.log('Session cũ:', session);
+            parsed.expires = new Date(Date.now() + 2 * 60 * 1000);
+            const newValue = await encrypt(parsed);
+            console.log('Session updated:', newValue);
+            return {
+                newCookie: {
+                    name: 'session',
+                    value: newValue,
+                    options: { httpOnly: true, expires: parsed.expires },
+                },
+            };
         }
+        return {};
     }
-    return res;
 }

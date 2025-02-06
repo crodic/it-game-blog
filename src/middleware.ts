@@ -3,23 +3,48 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession, updateSession } from './actions/auth';
 
 const publicRoute = ['/'];
-const privateRoute = ['/dashboard'];
+const privateRoute = [
+    '/dashboard',
+    '/dashboard/blogs',
+    '/dashboard/blogs/create',
+    '/dashboard/blogs/update',
+    '/dashboard/categories',
+];
 const authRoute = ['/login'];
 
 export async function middleware(request: NextRequest) {
-    // TODO: 1. Kiểm tra và update session khi cần thiết
-    updateSession(request);
-    const isAuth = await getSession(); // TODO: 2. Biến kiểm tra auth của user
-    const currentUrl = request.nextUrl.pathname; // TODO: 3. Lấy đường dẫn hiện tại
+    console.log('trigger middleware');
 
-    // TODO: 4. Kiem tra route
-    if (authRoute.includes(currentUrl) && isAuth) {
+    // 1. Kiểm tra và update session
+    const sessionUpdateResult = await updateSession(request);
+    if (sessionUpdateResult.redirect) {
+        // Nếu cần redirect (ví dụ: session không hợp lệ) thì trả về response redirect ngay
+        const response = NextResponse.redirect(new URL(sessionUpdateResult.redirect, request.url));
+        return response.cookies.delete('session');
+    }
+
+    // Tạo response mặc định để có thể thêm cookie nếu cần
+    const response = NextResponse.next();
+    if (sessionUpdateResult.newCookie) {
+        response.cookies.set({
+            name: sessionUpdateResult.newCookie.name,
+            value: sessionUpdateResult.newCookie.value,
+            httpOnly: sessionUpdateResult.newCookie.options.httpOnly,
+            expires: sessionUpdateResult.newCookie.options.expires,
+        });
+    }
+
+    const isAuth = !!(await getSession());
+    const path = request.nextUrl.pathname;
+
+    if (authRoute.includes(path) && isAuth) {
         return NextResponse.redirect(new URL('/', request.url));
     }
-
-    if (privateRoute.includes(currentUrl) && !isAuth) {
+    if (privateRoute.includes(path) && !isAuth) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
+
+    return response;
 }
 
 export const config = {

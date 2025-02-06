@@ -27,10 +27,11 @@ export default function BlogCard({ showDescription, data, hiddenTags }: BlogCard
                 <div className="relative w-full aspect-video">
                     <Image
                         src={data.thumbnail}
-                        alt="test"
+                        alt={data.title}
                         fill
                         className="object-cover object-top"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        quality={100}
                     />
                 </div>
             </CardHeader>
