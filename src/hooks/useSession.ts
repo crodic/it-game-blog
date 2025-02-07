@@ -2,11 +2,13 @@
 'use client';
 
 import { logout, UserSession } from '@/actions/auth';
+import { User } from '@prisma/client';
 import { useEffect, useState } from 'react';
 
 const useSession = () => {
-    const [session, setSession] = useState<UserSession | undefined>(undefined);
-    const [isLoading, setIsLoading] = useState(true);
+    const [session, setSession] = useState<{ token: UserSession; authUser: Omit<User, 'password'> } | undefined>(
+        undefined
+    );
 
     useEffect(() => {
         const getSession = async () => {
@@ -14,7 +16,6 @@ const useSession = () => {
                 const session = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users`);
                 const data = await session.json();
                 setSession(data);
-                setIsLoading(false);
             } catch (error: any) {
                 if (error.status === 401) {
                     await logout();
@@ -25,7 +26,7 @@ const useSession = () => {
         getSession();
     }, []);
 
-    return { session, isLoading };
+    return { session };
 };
 
 export default useSession;
