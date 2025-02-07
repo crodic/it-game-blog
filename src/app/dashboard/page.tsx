@@ -2,6 +2,7 @@ import AnalysisCard from '@/components/analysis-card';
 import { BlogChart } from './_components/blog-chart';
 import { CategoryChart } from './_components/category-chart';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
     title: 'DASHBOARD | Bảng điều khiển',
@@ -9,9 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/analysis`, { cache: 'force-cache' }).then((res) =>
-        res.json()
-    );
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/analysis`, { cache: 'no-store' })
+        .then((res) => res.json())
+        .catch(() => notFound());
     const payload = res.data;
 
     return (

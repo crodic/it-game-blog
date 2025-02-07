@@ -10,6 +10,7 @@ export const GET = async () => {
         const data = { blogs, categories, totalViews, totalSubscribe };
         return Response.json({ status: 200, data }, { status: 200 });
     } catch (error: any) {
+        console.error(error.message);
         return Response.json({ message: error.message }, { status: 500 });
     }
 };
