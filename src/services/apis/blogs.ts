@@ -32,3 +32,10 @@ export const getBlogDetail = async (id: string) => {
     if (!res.ok) throw new Error(payload.message);
     return payload.data as Blog;
 };
+
+export const getBlogStats = async () => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/analysis/blogs`);
+    const payload = await res.json();
+    if (!res.ok) throw new Error(payload.message);
+    return payload.data as { month: string; blog: number }[];
+};
