@@ -8,6 +8,12 @@ import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
 import EditProfileForm from './_components/edit-profile-form';
 import ChangePasswordForm from './_components/change-password-form';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'DASHBOARD | Quản lý tài khoản',
+    description: 'Trang quản lý tài khoản',
+};
 
 const getUser = cache(async (id: string) => {
     const user = await prisma.user.findUnique({

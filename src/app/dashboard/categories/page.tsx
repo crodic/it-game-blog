@@ -1,5 +1,11 @@
+import { Metadata } from 'next';
 import CategoryForm from './_components/category-form';
 import CategoryView from './_components/category-view';
+
+export const metadata: Metadata = {
+    title: 'DASHBOARD | Quản lý danh mục',
+    description: 'Trang quản lý danh mục',
+};
 
 export default function Page() {
     return (

@@ -1,4 +1,10 @@
+import { Metadata } from 'next';
 import { LoginForm } from './_components/login-form';
+
+export const metadata: Metadata = {
+    title: 'DASHBOARD | Trang đăng nhập quản trị viên',
+    description: 'Trang đăng nhập quản trị viên',
+};
 
 export default function LoginPage() {
     return (

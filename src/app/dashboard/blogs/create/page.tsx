@@ -1,4 +1,10 @@
+import { Metadata } from 'next';
 import BlogForm from './_components/blog-form';
+
+export const metadata: Metadata = {
+    title: 'DASHBOARD | Tạo bài viết',
+    description: 'Trang tạo mới bài viết',
+};
 
 export default function Page() {
     return (

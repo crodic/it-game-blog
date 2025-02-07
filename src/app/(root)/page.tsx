@@ -1,4 +1,4 @@
-import Hero from '@/components/hero';
+import Hero from '@/app/(root)/_components/hero';
 import BlogsTrending from './_components/blogs-trending';
 import NewBlogsList from './_components/new-blogs-list';
 

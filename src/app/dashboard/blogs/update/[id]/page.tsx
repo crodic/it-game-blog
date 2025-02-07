@@ -1,4 +1,10 @@
+import { Metadata } from 'next';
 import UpdateBlogForm from './_components/update-blog-form';
+
+export const metadata: Metadata = {
+    title: 'DASHBOARD | Cập nhật bài viết',
+    description: 'Trang cập nhật bài viết',
+};
 
 export default function Page({ params: { id } }: { params: { id: string } }) {
     return (

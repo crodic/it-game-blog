@@ -24,15 +24,15 @@ const data = {
             items: [
                 {
                     title: 'Bảng Điều Khiển',
-                    url: '#',
+                    url: '/dashboard',
                 },
                 {
                     title: 'Báo Cáo',
-                    url: '#',
+                    url: '/dashboard/announcement',
                 },
                 {
                     title: 'Ý Kiến',
-                    url: '#',
+                    url: '/dashboard/feedback',
                 },
             ],
         },
