@@ -41,6 +41,15 @@ export async function generateStaticParams() {
     }
 }
 
+export async function generateMetadata({ params }: { params: { blogId: string } }) {
+    const post = await getBlog(params.blogId);
+    if (!post) return {};
+    return {
+        title: post.title,
+        description: post.description,
+    };
+}
+
 export default async function BlogDetail({ params }: { params: { blogId: string } }) {
     const post = await getBlog(params.blogId);
     if (!post) notFound();

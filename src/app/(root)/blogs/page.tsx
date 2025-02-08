@@ -5,6 +5,19 @@ import { Suspense } from 'react';
 const BlogSearch = dynamic(() => import('./_components/blog-search'), { ssr: false });
 const SearchBar = dynamic(() => import('@/components/search-bar'), { ssr: false });
 
+type Props = {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export const generateMetadata = async ({ searchParams }: Props) => {
+    const q = (await searchParams)['q'] || '';
+    const page = (await searchParams)['page'] || '1';
+    return {
+        title: `Trang ${page} - Tìm kiếm bài viết ${q ? `cho: "${q}"` : ''}`,
+        default: 'Tìm kiếm bài viết',
+    };
+};
+
 export default function Page() {
     return (
         <div className="wrapper">
