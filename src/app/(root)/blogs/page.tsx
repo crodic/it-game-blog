@@ -2,7 +2,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
-const BlogSearch = dynamic(() => import('./_components/blog-search'), { ssr: false });
+const BlogSearch = dynamic(() => import('./_components/blog-search'), {
+    ssr: false,
+    loading: () => <div className="flex-1">Đang tải...</div>,
+});
 const SearchBar = dynamic(() => import('@/components/search-bar'), { ssr: false });
 
 type Props = {

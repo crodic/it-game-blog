@@ -66,7 +66,7 @@ export default async function BlogDetail({ params }: { params: { blogId: string 
                     </div>
                     <Separator className="border-primary" />
                     <main
-                        className="h-max prose w-fit max-w-none"
+                        className="blog-content h-max prose w-fit max-w-none dark:text-white"
                         dangerouslySetInnerHTML={{ __html: post.content }}
                     ></main>
                     <div className="flex items-center gap-2">

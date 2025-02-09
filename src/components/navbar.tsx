@@ -1,8 +1,9 @@
 import Link from 'next/link';
-import SwitchMode from './switch-mode';
 import { cn } from '@/lib/utils';
-import { Button } from './ui/button';
-import { Menu } from 'lucide-react';
+import MobileMenu from './mobile-menu';
+import dynamic from 'next/dynamic';
+
+const SwitchMode = dynamic(() => import('./switch-mode'), { ssr: false });
 
 const NAVIGATION_ITEMS = [
     {
@@ -48,9 +49,7 @@ export default function Navbar() {
                         </li>
                     </ul>
                 </nav>
-                <Button size="icon" variant="ghost" className="sm:hidden flex">
-                    <Menu className="size-6" />
-                </Button>
+                <MobileMenu items={NAVIGATION_ITEMS} />
             </div>
         </header>
     );

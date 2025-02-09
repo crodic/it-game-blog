@@ -98,6 +98,15 @@ body {
     .wrapper {
         @apply w-full max-w-[1440px] mx-auto px-5 lg:px-32;
     }
+
+    .dark .blog-content strong,
+    .dark .blog-content h2,
+    .dark .blog-content h3,
+    .dark .blog-content h4,
+    .dark .blog-content h5,
+    .dark .blog-content h6 {
+        @apply text-white;
+    }
 }
 
 table.expense-table {

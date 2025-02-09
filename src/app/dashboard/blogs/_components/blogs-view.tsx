@@ -27,6 +27,7 @@ export default function BlogsView() {
         queryKey: ['blogs'],
         queryFn: () => getAllBlogs(true),
     });
+
     const queryClient = useQueryClient();
     const { mutateAsync } = useDeleteBlogMutation();
 

@@ -6,13 +6,13 @@ import { NextRequest } from 'next/server';
 export const GET = async (request: NextRequest) => {
     const searchParams = request.nextUrl.searchParams;
     const page = searchParams.get('page') || '1';
-    const limit = searchParams.get('limit') || '10';
+    const limit = searchParams.get('limit');
     const q = searchParams.get('q') || '';
     const isDashboard = Boolean(searchParams.get('isDashboard'));
     try {
         const skip = (Number(page) - 1) * Number(limit);
         const blogs = await prisma.blog.findMany({
-            take: Number(limit),
+            take: limit ? Number(limit) : undefined,
             skip,
             orderBy: {
                 createdAt: 'desc',
@@ -34,7 +34,7 @@ export const GET = async (request: NextRequest) => {
                 isPublished: isDashboard ? undefined : true,
             },
         });
-        const total = await prisma.blog.count();
+        const total = await prisma.blog.count({ where: { isPublished: isDashboard ? undefined : true } });
         const totalPage = Math.ceil(total / Number(limit));
         return Response.json(
             { status: 200, data: blogs, pagination: { currentPage: Number(page), totalPage, total } },

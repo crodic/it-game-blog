@@ -2,6 +2,8 @@ import { Blog } from '@prisma/client';
 import BlogCard from './blog-card';
 import { Separator } from './ui/separator';
 
+export const revalidate = 60;
+
 export default async function SideBlogs() {
     const data = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs/trending`, { cache: 'force-cache' }).then(
         (res) => res.json()
