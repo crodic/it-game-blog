@@ -53,7 +53,7 @@ const data = {
             items: [
                 {
                     title: 'Cài Đặt Chung',
-                    url: '#',
+                    url: '/dashboard/settings',
                 },
                 {
                     title: 'Cài Đặt Website',
