@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { TagInput, Tag } from 'emblor';
 import dynamic from 'next/dynamic';
 import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
@@ -20,6 +19,7 @@ import { getCategories } from '@/services/apis/categories';
 import { useRouter } from 'next/navigation';
 import { createBlog } from '../actions';
 import ImagePreview from '@/components/image-preview';
+import { TagsInput } from '@/components/tags-input';
 
 const TinyMiceEditor = dynamic(() => import('@/components/tiny-editor'), {
     loading: () => <div>Loading...</div>,
@@ -29,8 +29,6 @@ const TinyMiceEditor = dynamic(() => import('@/components/tiny-editor'), {
 export default function BlogForm() {
     const router = useRouter();
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const [tags, setTags] = useState<Tag[]>([]);
-    const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
     const form = useForm<BlogSchema>({
         resolver: zodResolver(blogSchema),
         defaultValues: {
@@ -232,17 +230,10 @@ export default function BlogForm() {
                                     <FormItem>
                                         <FormLabel>Tags</FormLabel>
                                         <FormControl>
-                                            <TagInput
-                                                disabled={isLoadingForm}
-                                                {...field}
-                                                tags={tags}
-                                                placeholder="Nhập tag..."
-                                                setTags={(newTags) => {
-                                                    setTags(newTags);
-                                                    form.setValue('tags', newTags as [Tag, ...Tag[]]);
-                                                }}
-                                                activeTagIndex={activeTagIndex}
-                                                setActiveTagIndex={setActiveTagIndex}
+                                            <TagsInput
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                placeholder="enter your used tech"
                                             />
                                         </FormControl>
                                     </FormItem>

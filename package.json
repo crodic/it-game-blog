@@ -37,7 +37,6 @@
         "clsx": "^2.1.1",
         "dayjs": "^1.11.13",
         "embla-carousel-react": "^8.5.2",
-        "emblor": "^1.4.7",
         "immer": "^10.1.1",
         "jose": "^5.9.6",
         "lucide-react": "^0.473.0",

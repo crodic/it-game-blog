@@ -10,7 +10,6 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { TagInput, Tag } from 'emblor';
 import dynamic from 'next/dynamic';
 import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
@@ -24,6 +23,7 @@ import { getBlogDetail } from '@/services/apis/blogs';
 import Swal from 'sweetalert2';
 import Link from 'next/link';
 import ImagePreview from '@/components/image-preview';
+import { TagsInput } from '@/components/tags-input';
 
 const TinyMiceEditor = dynamic(() => import('@/components/tiny-editor'), {
     loading: () => <div>Loading...</div>,
@@ -33,8 +33,6 @@ const TinyMiceEditor = dynamic(() => import('@/components/tiny-editor'), {
 export default function UpdateBlogForm({ blogId }: { blogId: string }) {
     const router = useRouter();
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const [tags, setTags] = useState<Tag[]>([]);
-    const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
     const form = useForm<BlogSchema>({
         resolver: zodResolver(blogSchema),
         defaultValues: {
@@ -114,17 +112,13 @@ export default function UpdateBlogForm({ blogId }: { blogId: string }) {
             content: blogDetail.content,
             categoriesId: blogDetail.categoriesId,
             isPublished: blogDetail.isPublished,
-            tags: blogDetail.tags.map((tag) => ({ id: tag, text: tag })),
+            tags: blogDetail.tags,
             thumbnail: blogDetail.thumbnail,
             description: blogDetail.description,
         });
 
         if (blogDetail.thumbnail) {
             setPreviewImage(blogDetail.thumbnail);
-        }
-
-        if (blogDetail.tags) {
-            setTags(blogDetail.tags.map((tag) => ({ id: tag, text: tag })));
         }
     }, [blogDetail, form]);
 
@@ -302,17 +296,10 @@ export default function UpdateBlogForm({ blogId }: { blogId: string }) {
                                     <FormItem>
                                         <FormLabel>Tags</FormLabel>
                                         <FormControl>
-                                            <TagInput
-                                                disabled={isLoadingForm}
-                                                {...field}
-                                                tags={tags}
-                                                placeholder="Nhập tag..."
-                                                setTags={(newTags) => {
-                                                    setTags(newTags);
-                                                    form.setValue('tags', newTags as [Tag, ...Tag[]]);
-                                                }}
-                                                activeTagIndex={activeTagIndex}
-                                                setActiveTagIndex={setActiveTagIndex}
+                                            <TagsInput
+                                                value={field.value}
+                                                onValueChange={field.onChange}
+                                                placeholder="enter your used tech"
                                             />
                                         </FormControl>
                                     </FormItem>

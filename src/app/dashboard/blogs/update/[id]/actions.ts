@@ -9,7 +9,7 @@ export const updateBlog = async (values: BlogSchema, id: string) => {
         const session = await getSession();
         if (!session) return { error: 'Vui lặng đăng nhập', data: null };
 
-        const tags = values.tags.map((tag) => tag.text.toLowerCase());
+        const tags = values.tags.map((tag) => tag.toLowerCase());
         const data = await prisma.blog.update({
             data: {
                 title: values.title,
