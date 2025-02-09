@@ -1,5 +1,6 @@
 'use server';
 
+import { sendWelcomeEmail } from '@/actions/send-mail';
 import { prisma } from '@/lib/prisma';
 
 const validateEmail = (email: string) => {
@@ -25,6 +26,17 @@ export const subscribe = async (prevState: any, formData: FormData) => {
     }
 
     await prisma.subscribe.create({ data: { email: data.email } });
+
+    const result = await sendWelcomeEmail({
+        name: data.email.split('@')[0],
+        email: data.email,
+    });
+
+    if (!result.success) {
+        return {
+            error: 'Có lỗi xảy ra, vui lòng thử lại sau.',
+        };
+    }
 
     return { message: 'Đăng ký thành công.' };
 };

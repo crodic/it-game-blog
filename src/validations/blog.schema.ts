@@ -6,14 +6,12 @@ export const blogSchema = z.object({
     description: z.string().min(1, 'Mô tả bài viết là bắt buộc.'),
     content: z.string().min(1, 'Nội dung bài viết là bắt buộc.'),
     categoriesId: z.string().min(1, 'Danh mục bài viết là bắt buộc.'),
-    tags: z
-        .array(
-            z.object({
-                id: z.string(),
-                text: z.string(),
-            })
-        )
-        .min(1, 'Tag bài viết là bắt buộc.'),
+    tags: z.array(
+        z.object({
+            id: z.string(),
+            text: z.string(),
+        })
+    ),
     isPublished: z.boolean().default(true),
 });
 
