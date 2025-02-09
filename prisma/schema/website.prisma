@@ -1,0 +1,10 @@
+model WebsiteSetting {
+    id           String        @id @default(auto()) @map("_id") @db.ObjectId
+    serverStatus SERVER_STATUS @default(ONLINE)
+}
+
+enum SERVER_STATUS {
+    ONLINE
+    OFFLINE
+    MAINTENANCE
+}
