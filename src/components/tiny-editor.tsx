@@ -125,7 +125,7 @@ export default function TinyMiceEditor({ onChange, value, disabled, initialValue
                         'fullscreen | undo redo | blocks | image ' +
                         'bold italic underline forecolor | alignleft aligncenter ' +
                         'alignright alignjustify | bullist numlist outdent indent | ' +
-                        'removeformat | help | codesample',
+                        'removeformat | help | codesample | media',
                     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
                     codesample_languages: [
                         { text: 'HTML/XML', value: 'markup' },
