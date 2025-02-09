@@ -294,12 +294,12 @@ export default function UpdateBlogForm({ blogId }: { blogId: string }) {
                                 control={form.control}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Tags</FormLabel>
+                                        <FormLabel>Thẻ nội dung</FormLabel>
                                         <FormControl>
                                             <TagsInput
                                                 value={field.value}
                                                 onValueChange={field.onChange}
-                                                placeholder="enter your used tech"
+                                                placeholder="Nhập các tags cho bài viết"
                                             />
                                         </FormControl>
                                     </FormItem>
