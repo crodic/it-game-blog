@@ -1,5 +1,4 @@
 'use client';
-
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import Image from 'next/image';
@@ -24,16 +23,14 @@ export default function BlogCard({ showDescription, data, hiddenTags }: BlogCard
             className={cn('card-wrapper rounded-none col-span-1 h-full cursor-pointer flex flex-col')}
         >
             <CardHeader className="p-0 pb-4">
-                <div className="relative w-full aspect-video">
-                    <Image
-                        src={data.thumbnail}
-                        alt={data.title}
-                        fill
-                        className="object-cover object-top"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        quality={100}
-                    />
-                </div>
+                <Image
+                    src={data.thumbnail}
+                    alt={data.title}
+                    width={1240}
+                    height={720}
+                    className="w-full h-auto aspect-video"
+                    priority
+                />
             </CardHeader>
             <CardContent className="flex flex-col gap-2">
                 <p className="text-xs sm:text-sm text-primary">{new Date(data.createdAt).toUTCString()}</p>

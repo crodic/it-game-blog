@@ -107,6 +107,14 @@ body {
     .dark .blog-content h6 {
         @apply text-white;
     }
+
+    .blog-content iframe {
+        @apply max-w-full aspect-video;
+    }
+
+    .blog-content .contain-inline-size {
+        @apply max-w-[300px] md:max-w-full overflow-auto;
+    }
 }
 
 table.expense-table {
