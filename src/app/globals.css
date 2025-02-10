@@ -113,7 +113,7 @@ body {
     }
 
     .blog-content .contain-inline-size {
-        @apply max-w-[300px] w-full md:max-w-full overflow-auto;
+        @apply w-full md:max-w-full overflow-auto;
     }
 }
 
