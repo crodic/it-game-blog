@@ -13,8 +13,6 @@ const privateRoute = [
 const authRoute = ['/login'];
 
 export async function middleware(request: NextRequest) {
-    console.log('trigger middleware');
-
     // 1. Kiểm tra và update session
     const sessionUpdateResult = await updateSession(request);
     if (sessionUpdateResult.redirect) {
