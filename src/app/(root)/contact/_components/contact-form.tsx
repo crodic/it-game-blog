@@ -8,6 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { ContributeSchema, contributeSchema } from '@/validations/contribute.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { sendContribution } from '../actions';
+import { toast } from '@/hooks/use-toast';
 
 export default function ContactForm() {
     const form = useForm<ContributeSchema>({
@@ -19,7 +21,19 @@ export default function ContactForm() {
     });
 
     const onSubmit = async (values: ContributeSchema) => {
-        console.log(values);
+        const result = await sendContribution(values);
+        if (result.status === 200) {
+            toast({
+                description: result.message,
+                variant: 'default',
+            });
+            form.reset();
+        } else {
+            toast({
+                description: result.message,
+                variant: 'destructive',
+            });
+        }
     };
 
     return (

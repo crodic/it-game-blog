@@ -1,0 +1,8 @@
+model Contributes {
+    id      String @id @default(auto()) @map("_id") @db.ObjectId
+    email   String
+    content String
+
+    sendedAt DateTime  @default(now())
+    seenAt   DateTime?
+}
