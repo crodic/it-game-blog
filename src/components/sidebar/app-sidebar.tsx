@@ -8,7 +8,6 @@ import { NavUser } from './nav-user';
 import { NavLogo } from './nav-logo';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from '@/components/ui/sidebar';
 
-// This is sample data.
 const data = {
     navMain: [
         {
@@ -22,12 +21,8 @@ const data = {
                     url: '/dashboard',
                 },
                 {
-                    title: 'Báo Cáo',
-                    url: '/dashboard/announcement',
-                },
-                {
-                    title: 'Ý Kiến',
-                    url: '/dashboard/feedback',
+                    title: 'Ý Kiến Đóng Góp',
+                    url: '/dashboard/contribute',
                 },
             ],
         },
